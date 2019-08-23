@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.nio.file.Files;
@@ -11,11 +14,16 @@ public class Duke {
         Scanner inputScanner = new Scanner(System.in);
         ArrayList<Task> taskList = new ArrayList<>();
         readFromFile(taskList);
-
+        String logo = " ____        _        \n"
+                + "|  _ \\ _   _| | _____ \n"
+                + "| | | | | | | |/ / _ \\\n"
+                + "| |_| | |_| |   <  __/\n"
+                + "|____/ \\__,_|_|\\_\\___|\n";
+        printMessage(logo);
         printMessage("Hello! I'm Duke\nWhat can I do for you?");
 
         String input;
-        //should use nextLine and not next, else sentences will be split by spaces.
+
         while(!(input=inputScanner.nextLine()).equals("bye")){
             if (input.startsWith("todo ")) {
                 if (input.length() > 5) {
@@ -83,7 +91,10 @@ public class Duke {
             printMessage("Please enter a number.");
             return;
         }
-
+        if (taskNumber > taskList.size()) {
+            printMessage("You have entered a number larger than the number of tasks.");
+            return;
+        }
         Task item = taskList.get(taskNumber-1);
         if (item.getIsDone()) {
             printMessage("Task is already done.");
@@ -100,9 +111,15 @@ public class Duke {
             printMessage("☹ OOPS!!! Please indicate the event timing after \"/at\"");
             return;
         }
-        String by = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
-        Event toAdd = new Event(task, by);
+
+        String at = input.substring(dateIndex+4);
+
+        LocalDateTime atValue = parseDate(at);
+        if (atValue == null ) {
+            return;
+        }
+        Event toAdd = new Event(task, atValue);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
         saveToFile(taskList);
@@ -113,9 +130,13 @@ public class Duke {
             printMessage("☹ OOPS!!! Please indicate the deadline after \"/by\"");
             return;
         }
-        String at = input.substring(dateIndex+4);
+        String by = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
-        Deadline toAdd = new Deadline(task, at);
+        LocalDateTime byValue = parseDate(by);
+        if (byValue == null) {
+            return;
+        }
+        Deadline toAdd = new Deadline(task, byValue);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
         saveToFile(taskList);
@@ -142,16 +163,16 @@ public class Duke {
             String className = value.getClass().getSimpleName();
             int isDone = 0;
             String description = value.description;
-            String date = "";
+            String newDate = "";
 
             if (className == "ToDo") {
                 taskType = "T";
             } else if (className == "Deadline") {
                 taskType = "D";
-                date = ((Deadline) value).by;
+                newDate = unparseDate(((Deadline) value).by);
             } else if (className == "Event") {
                 taskType = "E";
-                date = ((Event) value).at;
+                newDate = unparseDate(((Event) value).at);
             }
 
             if (value.isDone) {
@@ -159,12 +180,12 @@ public class Duke {
             } else {
                 isDone = 0;
             }
-            if (date != "") {
-                toSave += taskType + " | " + Integer.toString(isDone) + " | " + description + " | " + date + "\n";
+            if (newDate != "") {
+                toSave += taskType + " | " + Integer.toString(isDone) + " | " + description + " | " + newDate + "\n";
             } else {
                 toSave += taskType + " | " + Integer.toString(isDone) + " | " + description + "\n";
             }
-         }
+        }
         try {
             if (toSave != "") {
                 Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
@@ -175,26 +196,26 @@ public class Duke {
     }
     public static void readFromFile(ArrayList<Task> taskList) {
         try {
-            if (Files.isDirectory(Paths.get("data"))) {
+            if (Files.isDirectory(Paths.get("data")) && Files.isRegularFile(Paths.get("data/duke.txt"))) {
                 List<String> input = Files.readAllLines(Paths.get("data/duke.txt"));
                 for (String value : input) {
-                    String[] splitInput = value.split(" | ");
+                    String[] splitInput = value.split(" \\| ");
 
                     if (value.charAt(0) == 'E') {
-                        Event newEvent = new Event(splitInput[4], splitInput[6]);
-                        if (splitInput[2].equals("1")) {
+                        Event newEvent = new Event(splitInput[2], parseDate(splitInput[3]));
+                        if (splitInput[1].equals("1")) {
                             newEvent.markAsDone();
                         }
                         taskList.add(newEvent);
                     } else if (value.charAt(0) == 'T') {
-                        ToDo newToDo = new ToDo(splitInput[4]);
-                        if (splitInput[2].equals("1")) {
+                        ToDo newToDo = new ToDo(splitInput[2]);
+                        if (splitInput[1].equals("1")) {
                             newToDo.markAsDone();
                         }
                         taskList.add(newToDo);
                     } else if (value.charAt(0) == 'D') {
-                        Deadline newDeadline = new Deadline(splitInput[4], splitInput[6]);
-                        if (splitInput[2].equals("1")) {
+                        Deadline newDeadline = new Deadline(splitInput[2], parseDate(splitInput[3]));
+                        if (splitInput[1].equals("1")) {
                             newDeadline.markAsDone();
                         }
                         taskList.add(newDeadline);
@@ -205,5 +226,20 @@ public class Duke {
             e.printStackTrace();
         }
 
+    }
+    public static LocalDateTime parseDate(String dateToParse) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy HHmm");
+            LocalDateTime dateTime = LocalDateTime.parse(dateToParse, formatter);
+            return dateTime;
+        } catch (DateTimeParseException e) {
+            printMessage("☹ OOPS!!! Please format your date and time in this format \"20/12/2019 1859\"");
+        }
+        return null;
+    }
+
+    public static String unparseDate(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy HHmm");
+        return  dateTime.format(formatter);
     }
 }
