@@ -13,18 +13,37 @@ public class Duke {
         //should use nextLine and not next, else sentences will be split by spaces.
         while(!(input=inputScanner.nextLine()).equals("bye")){
             if (input.startsWith("todo ")) {
-                parseToDo(input.substring(5), taskList);
+                if (input.length() > 5) {
+                    parseToDo(input.substring(5), taskList);
+                } else {
+                    printMessage("☹ OOPS!!! The description of a todo cannot be empty.");
+                }
             } else if (input.startsWith("event ")) {
-                parseEvent(input.substring(6), taskList);
+                if (input.length() > 6) {
+                    parseEvent(input.substring(6), taskList);
+                } else {
+                    printMessage("☹ OOPS!!! The description of an event cannot be empty.");
+                }
             } else if (input.startsWith("deadline ")) {
-                parseDeadline(input.substring(9), taskList);
+                if (input.length() > 9) {
+                    parseDeadline(input.substring(9), taskList);
+                } else {
+                    printMessage("☹ OOPS!!! The description of a deadline cannot be empty.");
+                }
             } else if (input.startsWith("done ")) {
-                markTaskAsDone(input, taskList);
+                if (input.length() > 5) {
+                    markTaskAsDone(input, taskList);
+                } else {
+                    printMessage("☹ OOPS!!! The task to be marked as done cannot be empty.");
+                }
             } else if (input.equals("list")) {
-                printList(taskList);
+                if (taskList.size() > 0) {
+                    printList(taskList);
+                } else {
+                    printMessage("You have no tasks in your list.");
+                }
             } else {
-                taskList.add(new Task(input));
-                printMessage("added: " + input);
+                printMessage("☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
         }
 
@@ -71,6 +90,10 @@ public class Duke {
 
     public static void parseEvent(String input, ArrayList<Task> taskList ) {
         int dateIndex = input.indexOf("/at ");
+        if (dateIndex == -1) {
+            printMessage("☹ OOPS!!! Please indicate the event timing after \"/at\"");
+            return;
+        }
         String by = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
         Event toAdd = new Event(task, by);
@@ -79,6 +102,10 @@ public class Duke {
     }
     public static void parseDeadline(String input, ArrayList<Task> taskList ) {
         int dateIndex = input.indexOf("/by ");
+        if (dateIndex == -1) {
+            printMessage("☹ OOPS!!! Please indicate the deadline after \"/by\"");
+            return;
+        }
         String at = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
         Deadline toAdd = new Deadline(task, at);
