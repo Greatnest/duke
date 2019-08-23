@@ -1,11 +1,16 @@
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class Duke {
     public static void main(String[] args) {
         Scanner inputScanner = new Scanner(System.in);
         ArrayList<Task> taskList = new ArrayList<>();
+        readFromFile(taskList);
 
         printMessage("Hello! I'm Duke\nWhat can I do for you?");
 
@@ -86,6 +91,7 @@ public class Duke {
         }
         item.markAsDone();
         printMessage("Nice! I've marked this task as done: \n  " + item.toString());
+        saveToFile(taskList);
     }
 
     public static void parseEvent(String input, ArrayList<Task> taskList ) {
@@ -99,6 +105,7 @@ public class Duke {
         Event toAdd = new Event(task, by);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
+        saveToFile(taskList);
     }
     public static void parseDeadline(String input, ArrayList<Task> taskList ) {
         int dateIndex = input.indexOf("/by ");
@@ -111,11 +118,92 @@ public class Duke {
         Deadline toAdd = new Deadline(task, at);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
+        saveToFile(taskList);
     }
 
     public static void parseToDo(String input, ArrayList<Task> taskList) {
         ToDo toAdd = new ToDo(input);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
+        saveToFile(taskList);
+    }
+    public static void saveToFile(ArrayList<Task> taskList) {
+        String fileName = "data/duke.txt";
+        try {
+            if (!Files.isDirectory(Paths.get("data"))) {
+                Files.createDirectory(Paths.get("data"));
+            }
+        } catch (IOException e) {
+        }
+        String toSave = "";
+
+        for (Task value : taskList) {
+            String taskType = "";
+            String className = value.getClass().getSimpleName();
+            int isDone = 0;
+            String description = value.description;
+            String date = "";
+
+            if (className == "ToDo") {
+                taskType = "T";
+            } else if (className == "Deadline") {
+                taskType = "D";
+                date = ((Deadline) value).by;
+            } else if (className == "Event") {
+                taskType = "E";
+                date = ((Event) value).at;
+            }
+
+            if (value.isDone) {
+                isDone = 1;
+            } else {
+                isDone = 0;
+            }
+            if (date != "") {
+                toSave += taskType + " | " + Integer.toString(isDone) + " | " + description + " | " + date + "\n";
+            } else {
+                toSave += taskType + " | " + Integer.toString(isDone) + " | " + description + "\n";
+            }
+         }
+        try {
+            if (toSave != "") {
+                Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void readFromFile(ArrayList<Task> taskList) {
+        try {
+            if (Files.isDirectory(Paths.get("data"))) {
+                List<String> input = Files.readAllLines(Paths.get("data/duke.txt"));
+                for (String value : input) {
+                    String[] splitInput = value.split(" | ");
+
+                    if (value.charAt(0) == 'E') {
+                        Event newEvent = new Event(splitInput[4], splitInput[6]);
+                        if (splitInput[2].equals("1")) {
+                            newEvent.markAsDone();
+                        }
+                        taskList.add(newEvent);
+                    } else if (value.charAt(0) == 'T') {
+                        ToDo newToDo = new ToDo(splitInput[4]);
+                        if (splitInput[2].equals("1")) {
+                            newToDo.markAsDone();
+                        }
+                        taskList.add(newToDo);
+                    } else if (value.charAt(0) == 'D') {
+                        Deadline newDeadline = new Deadline(splitInput[4], splitInput[6]);
+                        if (splitInput[2].equals("1")) {
+                            newDeadline.markAsDone();
+                        }
+                        taskList.add(newDeadline);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
