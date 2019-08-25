@@ -131,6 +131,8 @@ public class Duke {
         String fileName = "data/duke.txt";
         String toSave = "";
 
+        createFileAndDirectory();
+
         for (Task value : taskList) {
             String taskType = "";
             String className = value.getClass().getSimpleName();
@@ -160,11 +162,9 @@ public class Duke {
             }
          }
         try {
-            if (toSave != "") {
-                Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
-            }
+            Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
         } catch (IOException e) {
-            createFileAndDirectory();
+            saveToFile(taskList);
         }
     }
     public static void readFromFile(ArrayList<Task> taskList) {
