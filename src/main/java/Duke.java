@@ -150,13 +150,8 @@ public class Duke {
     }
     public static void saveToFile(ArrayList<Task> taskList) {
         String fileName = "data/duke.txt";
-        try {
-            if (!Files.isDirectory(Paths.get("data"))) {
-                Files.createDirectory(Paths.get("data"));
-            }
-        } catch (IOException e) {
-        }
         String toSave = "";
+        createFileAndDirectory();
 
         for (Task value : taskList) {
             String taskType = "";
@@ -187,11 +182,9 @@ public class Duke {
             }
         }
         try {
-            if (toSave != "") {
-                Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
-            }
+            Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
         } catch (IOException e) {
-            e.printStackTrace();
+            saveToFile(taskList);
         }
     }
     public static void readFromFile(ArrayList<Task> taskList) {
@@ -223,9 +216,8 @@ public class Duke {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            createFileAndDirectory();
         }
-
     }
     public static LocalDateTime parseDate(String dateToParse) {
         try {
@@ -241,5 +233,14 @@ public class Duke {
     public static String unparseDate(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy HHmm");
         return  dateTime.format(formatter);
+    }
+
+    public static  void createFileAndDirectory(){
+        try {
+            Files.createDirectory(Paths.get("data"));
+            Files.createFile(Paths.get("data/duke.txt"));
+        } catch (IOException e) {
+            createFileAndDirectory();
+        }
     }
 }
