@@ -129,12 +129,6 @@ public class Duke {
     }
     public static void saveToFile(ArrayList<Task> taskList) {
         String fileName = "data/duke.txt";
-        try {
-            if (!Files.isDirectory(Paths.get("data"))) {
-                Files.createDirectory(Paths.get("data"));
-            }
-        } catch (IOException e) {
-        }
         String toSave = "";
 
         for (Task value : taskList) {
@@ -170,31 +164,31 @@ public class Duke {
                 Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            createFileAndDirectory();
         }
     }
     public static void readFromFile(ArrayList<Task> taskList) {
         try {
-            if (Files.isDirectory(Paths.get("data"))) {
+            if (Files.isDirectory(Paths.get("data")) && Files.isRegularFile(Paths.get("data/duke.txt"))) {
                 List<String> input = Files.readAllLines(Paths.get("data/duke.txt"));
                 for (String value : input) {
-                    String[] splitInput = value.split(" | ");
+                    String[] splitInput = value.split(" \\| ");
 
                     if (value.charAt(0) == 'E') {
-                        Event newEvent = new Event(splitInput[4], splitInput[6]);
-                        if (splitInput[2].equals("1")) {
+                        Event newEvent = new Event(splitInput[2], splitInput[3]);
+                        if (splitInput[1].equals("1")) {
                             newEvent.markAsDone();
                         }
                         taskList.add(newEvent);
                     } else if (value.charAt(0) == 'T') {
-                        ToDo newToDo = new ToDo(splitInput[4]);
-                        if (splitInput[2].equals("1")) {
+                        ToDo newToDo = new ToDo(splitInput[2]);
+                        if (splitInput[1].equals("1")) {
                             newToDo.markAsDone();
                         }
                         taskList.add(newToDo);
                     } else if (value.charAt(0) == 'D') {
-                        Deadline newDeadline = new Deadline(splitInput[4], splitInput[6]);
-                        if (splitInput[2].equals("1")) {
+                        Deadline newDeadline = new Deadline(splitInput[2], splitInput[3]);
+                        if (splitInput[1].equals("1")) {
                             newDeadline.markAsDone();
                         }
                         taskList.add(newDeadline);
@@ -202,7 +196,16 @@ public class Duke {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            createFileAndDirectory();
+        }
+
+    }
+    public static  void createFileAndDirectory(){
+        try {
+            Files.createDirectory(Paths.get("data"));
+            Files.createFile(Paths.get("data/duke.txt"));
+        } catch (IOException e) {
+            createFileAndDirectory();
         }
 
     }
