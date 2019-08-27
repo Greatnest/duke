@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -10,41 +9,13 @@ public class Duke {
         printMessage("Hello! I'm Duke\nWhat can I do for you?");
 
         String input;
-        //should use nextLine and not next, else sentences will be split by spaces.
+
         while(!(input=inputScanner.nextLine()).equals("bye")){
-            if (input.startsWith("todo ")) {
-                if (input.length() > 5) {
-                    parseToDo(input.substring(5), taskList);
-                } else {
-                    printMessage("☹ OOPS!!! The description of a todo cannot be empty.");
-                }
-            } else if (input.startsWith("event ")) {
-                if (input.length() > 6) {
-                    parseEvent(input.substring(6), taskList);
-                } else {
-                    printMessage("☹ OOPS!!! The description of an event cannot be empty.");
-                }
-            } else if (input.startsWith("deadline ")) {
-                if (input.length() > 9) {
-                    parseDeadline(input.substring(9), taskList);
-                } else {
-                    printMessage("☹ OOPS!!! The description of a deadline cannot be empty.");
-                }
-            } else if (input.startsWith("done ")) {
-                if (input.length() > 5) {
-                    markTaskAsDone(input, taskList);
-                } else {
-                    printMessage("☹ OOPS!!! The task to be marked as done cannot be empty.");
-                }
-            } else if (input.equals("list")) {
-                if (taskList.size() > 0) {
-                    printList(taskList);
-                } else {
-                    printMessage("You have no tasks in your list.");
-                }
-            } else {
-                printMessage("☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
-            }
+             try {
+                 parseInput(input, taskList);
+             } catch (DukeException e) {
+                 System.out.println(e);
+             }
         }
 
         printMessage("Bye. Hope to see you again soon!");
@@ -54,7 +25,26 @@ public class Duke {
         System.out.println(msg);
     }
 
-    public static void printList(ArrayList<Task> taskList) {
+    public static void parseInput(String input, ArrayList<Task> taskList) throws DukeException {
+        if (input.startsWith("todo ")) {
+            parseToDo(input, taskList);
+        } else if (input.startsWith("event ")) {
+            parseEvent(input, taskList);
+        } else if (input.startsWith("deadline ")) {
+            parseDeadline(input, taskList);
+        } else if (input.startsWith("done ")) {
+            markTaskAsDone(input, taskList);
+        } else if (input.equals("list")) {
+            printList(taskList);
+        } else {
+            throw new DukeException("☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
+        }
+    }
+
+    public static void printList(ArrayList<Task> taskList) throws DukeException {
+        if (taskList.size() == 0) {
+            throw new DukeException("You have no tasks in your list");
+        }
         int start = 1;
         String outputString = "";
         outputString += "Here are the tasks in your list:\n";
@@ -70,8 +60,12 @@ public class Duke {
         printMessage(outputString);
     }
 
-    public static void markTaskAsDone(String input, ArrayList<Task> taskList) {
+    public static void markTaskAsDone(String input, ArrayList<Task> taskList) throws DukeException {
         int taskNumber;
+
+        if (input.length() < 6) {
+            throw new DukeException("\"☹ OOPS!!! The task to be marked as done cannot be empty.\"");
+        }
         try {
             taskNumber = Integer.parseInt(input.substring(5));
         } catch (NumberFormatException e) {
@@ -79,20 +73,28 @@ public class Duke {
             return;
         }
 
+        if (taskNumber > taskList.size())  {
+            throw new DukeException("The task number is larger than the number of tasks in the list");
+        }
+
         Task item = taskList.get(taskNumber-1);
         if (item.getIsDone()) {
-            printMessage("Task is already done.");
-            return;
+            throw new DukeException("Task is already done.");
         }
         item.markAsDone();
         printMessage("Nice! I've marked this task as done: \n  " + item.toString());
     }
 
-    public static void parseEvent(String input, ArrayList<Task> taskList ) {
+    public static void parseEvent(String input, ArrayList<Task> taskList ) throws DukeException {
+        if (input.length() < 7) {
+            throw new DukeException("☹ OOPS!!! The description of an event cannot be empty.");
+        }
+        input = input.substring(7);
+
         int dateIndex = input.indexOf("/at ");
         if (dateIndex == -1) {
-            printMessage("☹ OOPS!!! Please indicate the event timing after \"/at\"");
-            return;
+            throw new DukeException("☹ OOPS!!! Please indicate the event timing after \"/at\"");
+
         }
         String by = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
@@ -100,11 +102,15 @@ public class Duke {
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
     }
-    public static void parseDeadline(String input, ArrayList<Task> taskList ) {
+
+    public static void parseDeadline(String input, ArrayList<Task> taskList ) throws DukeException {
+        if (input.length() < 10) {
+            throw new DukeException("☹ OOPS!!! The description of a deadline cannot be empty.");
+        }
+        input = input.substring(9);
         int dateIndex = input.indexOf("/by ");
         if (dateIndex == -1) {
-            printMessage("☹ OOPS!!! Please indicate the deadline after \"/by\"");
-            return;
+            throw new DukeException("☹ OOPS!!! Please indicate the deadline after \"/by\"");
         }
         String at = input.substring(dateIndex+4);
         String task = input.substring(0, dateIndex-1);
@@ -113,7 +119,11 @@ public class Duke {
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
     }
 
-    public static void parseToDo(String input, ArrayList<Task> taskList) {
+    public static void parseToDo(String input, ArrayList<Task> taskList) throws DukeException {
+        if (input.length() < 6) {
+            throw new DukeException("☹ OOPS!!! The description of a todo cannot be empty.\"");
+        }
+
         ToDo toAdd = new ToDo(input);
         taskList.add(toAdd);
         printMessage("Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
