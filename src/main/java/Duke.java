@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -239,6 +240,8 @@ public class Duke {
         try {
             Files.createDirectory(Paths.get("data"));
             Files.createFile(Paths.get("data/duke.txt"));
+        } catch(FileAlreadyExistsException e){
+          return;
         } catch (IOException e) {
             createFileAndDirectory();
         }
