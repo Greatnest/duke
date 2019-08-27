@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.nio.file.Files;
@@ -15,7 +16,7 @@ public class Duke {
         printMessage("Hello! I'm Duke\nWhat can I do for you?");
 
         String input;
-        //should use nextLine and not next, else sentences will be split by spaces.
+
         while(!(input=inputScanner.nextLine()).equals("bye")){
             if (input.startsWith("todo ")) {
                 if (input.length() > 5) {
@@ -204,6 +205,8 @@ public class Duke {
         try {
             Files.createDirectory(Paths.get("data"));
             Files.createFile(Paths.get("data/duke.txt"));
+        } catch(FileAlreadyExistsException e) {
+            return;
         } catch (IOException e) {
             createFileAndDirectory();
         }
