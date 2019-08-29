@@ -7,7 +7,7 @@ public class Duke {
 
         String input;
 
-        while(!(input=inputScanner.next()).equals("bye")){
+        while(!(input=inputScanner.nextLine()).equals("bye")){
             printMessage((input));
         }
 
