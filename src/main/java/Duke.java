@@ -57,7 +57,8 @@ public class Duke {
 
     public static void printList(ArrayList<Task> taskList) throws DukeException {
         if (taskList.size() == 0) {
-            throw new DukeException("You have no tasks in your list");
+            printMessage("You have no tasks in your list");
+            return;
         }
         int start = 1;
         String outputString = "";
@@ -78,7 +79,7 @@ public class Duke {
         int taskNumber;
 
         if (input.length() < 6) {
-            throw new DukeException("\"☹ OOPS!!! The task to be marked as done cannot be empty.\"");
+            throw new DukeException("☹ OOPS!!! The task to be marked as done cannot be empty.");
         }
         try {
             taskNumber = Integer.parseInt(input.substring(5));
@@ -105,7 +106,7 @@ public class Duke {
         if (input.length() < 7) {
             throw new DukeException("☹ OOPS!!! The description of an event cannot be empty.");
         }
-        input = input.substring(7);
+        input = input.substring(6);
 
         int dateIndex = input.indexOf("/at ");
         if (dateIndex == -1) {
@@ -149,8 +150,10 @@ public class Duke {
 
     public static void parseToDo(String input, ArrayList<Task> taskList) throws DukeException {
         if (input.length() < 6) {
-            throw new DukeException("☹ OOPS!!! The description of a todo cannot be empty.\"");
+            throw new DukeException("☹ OOPS!!! The description of a todo cannot be empty.");
         }
+
+        input = input.substring(5);
 
         ToDo toAdd = new ToDo(input);
         taskList.add(toAdd);
@@ -230,7 +233,7 @@ public class Duke {
     }
     public static LocalDateTime parseDate(String dateToParse) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy HHmm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
             LocalDateTime dateTime = LocalDateTime.parse(dateToParse, formatter);
             return dateTime;
         } catch (DateTimeParseException e) {
@@ -240,7 +243,7 @@ public class Duke {
     }
 
     public static String unparseDate(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy HHmm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
         return dateTime.format(formatter);
     }
 
