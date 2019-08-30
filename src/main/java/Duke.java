@@ -50,6 +50,8 @@ public class Duke {
             markTaskAsDone(input, taskList);
         } else if (input.equals("list")) {
             printList(taskList);
+        }  else if (input.startsWith("find ")) {
+            findTask(input, taskList);
         } else {
             throw new DukeException("☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
@@ -247,7 +249,7 @@ public class Duke {
         return dateTime.format(formatter);
     }
 
-    public static  void createFileAndDirectory(){
+    public static void createFileAndDirectory(){
         try {
             Files.createDirectory(Paths.get("data"));
             Files.createFile(Paths.get("data/duke.txt"));
@@ -255,6 +257,35 @@ public class Duke {
           return;
         } catch (IOException e) {
             createFileAndDirectory();
+        }
+    }
+    public static void findTask(String input, ArrayList<Task> taskList) throws DukeException {
+        if (input.length() < 6) {
+            throw new DukeException("☹ OOPS!!! The task to find cannot be empty.");
+        }
+
+        input = input.substring(5);
+
+        if (taskList.size() == 0) {
+            throw new DukeException("You have no tasks in your list");
+        }
+        int start = 1;
+        String outputString = "";
+        boolean exists = false;
+        outputString += "Here are the matching tasks in your list:\n";
+
+        for (Task value : taskList) {
+            if (value.description.contains(input)) {
+                outputString += start + "." + value.toString() + "\n";
+                start++;
+                exists = true;
+            }
+        }
+        if (exists) {
+            outputString = outputString.substring(0, outputString.length() - 1);
+            printMessage(outputString);
+        } else {
+            printMessage("There are no matching tasks in your list.");
         }
     }
 }
