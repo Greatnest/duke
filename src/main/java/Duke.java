@@ -6,8 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.Paths;;
 import java.util.List;
 
 public class Duke {
@@ -50,6 +49,8 @@ public class Duke {
             markTaskAsDone(input, taskList);
         } else if (input.equals("list")) {
             printList(taskList);
+        } else if (input.startsWith("delete ")) {
+            deleteTask(input, taskList);
         } else {
             throw new DukeException("☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
@@ -194,9 +195,9 @@ public class Duke {
             }
         }
         try {
-            Files.writeString(Paths.get(fileName), toSave, StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            saveToFile(taskList);
+            Files.writeString(Paths.get(fileName), toSave);
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
     public static void readFromFile(ArrayList<Task> taskList) {
@@ -256,5 +257,24 @@ public class Duke {
         } catch (IOException e) {
             createFileAndDirectory();
         }
+    }
+
+    public static void deleteTask(String input, ArrayList<Task> taskList) throws DukeException {
+        if (input.length() < 8) {
+            throw new DukeException("☹ OOPS!!! The task to delete cannot be empty.");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(input.substring(7));
+        } catch (NumberFormatException e) {
+            printMessage("Please enter a number.");
+            return;
+        }
+        if (taskNumber > taskList.size()) {
+            throw new DukeException("You have entered a number larger than the number of tasks.");
+        }
+        Task toDelete = taskList.remove(taskNumber-1);
+        printMessage("Noted. I've removed this task: \n  " + toDelete.toString() + "\nNow you have " + taskList.size() + " task(s) in the list.");
+        saveToFile(taskList);
     }
 }
