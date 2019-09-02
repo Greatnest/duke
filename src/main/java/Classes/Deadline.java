@@ -17,6 +17,6 @@ public class Deadline extends Task {
 
     private String dateToString(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
-        return  dateTime.format(formatter);
+        return dateTime.format(formatter);
     }
 }
