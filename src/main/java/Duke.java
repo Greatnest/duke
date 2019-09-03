@@ -4,9 +4,9 @@ public class Duke {
     private Ui ui;
 
 
-    public Duke(String filepath) {
+    public Duke() {
         ui = new Ui();
-        storage = new Storage(filepath);
+        storage = new Storage("data/tasks.txt");
         try {
             tasks = new TaskList(storage.load());
         } catch (DukeException e) {
@@ -30,8 +30,24 @@ public class Duke {
         }
     }
 
+    protected String getResponse(String input) {
+        String response;
+        boolean isExit = false;
+        try {
+            Command c = Parser.parse(input);
+            c.execute(tasks, ui, storage);
+            isExit = c.isExit;
+            if (isExit) {
+                return ui.showGoodByeMessage();
+            }
+            return ui.printOutputGUI();
+        } catch (DukeException e) {
+            return ui.printException(e);
+        }
+    }
+
     public static void main(String[] args) {
-        new Duke("data/tasks.txt").run();
+        new Duke().run();
     }
 
 }

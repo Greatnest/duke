@@ -9,7 +9,7 @@ public class MarkTaskAsDoneCommand extends Command{
         int taskNumber;
 
         if (input.length() < 6) {
-            throw new DukeException("☹ OOPS!!! The task to be marked as done cannot be empty.");
+            throw new DukeException("OOPS!!! The task to be marked as done cannot be empty.");
         }
         try {
             taskNumber = Integer.parseInt(input.substring(5));
@@ -27,7 +27,8 @@ public class MarkTaskAsDoneCommand extends Command{
             throw new DukeException("Task is already done.");
         }
         item.markAsDone();
-        ui.showMessage("Nice! I've marked this task as done: \n  " + item.toString());
+        //ui.showMessage("Nice! I've marked this task as done: \n  " + item.toString());
+        ui.output = "Nice! I've marked this task as done: \n  " + item.toString();
         storage.saveToFile();
     }
 }

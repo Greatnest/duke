@@ -7,7 +7,7 @@ public class DeleteTaskCommand extends Command {
     @Override
     public void execute(TaskList taskList, Ui ui, Storage storage) throws DukeException {
         if (input.length() < 8) {
-            throw new DukeException("☹ OOPS!!! The task to delete cannot be empty.");
+            throw new DukeException("OOPS!!! The task to delete cannot be empty.");
         }
         int taskNumber;
         try {
@@ -20,7 +20,8 @@ public class DeleteTaskCommand extends Command {
             throw new DukeException("You have entered a number larger than the number of tasks.");
         }
         Task toDelete = taskList.deleteFromArrayList(taskNumber-1);
-        ui.showMessage("Noted. I've removed this task: \n  " + toDelete.toString() + "\nNow you have " + taskList.getSize() + " task(s) in the list.");
+        //ui.showMessage("Noted. I've removed this task: \n  " + toDelete.toString() + "\nNow you have " + taskList.getSize() + " task(s) in the list.");
+        ui.output = "Noted. I've removed this task: \n  " + toDelete.toString() + "\nNow you have " + taskList.getSize() + " task(s) in the list.";
         storage.saveToFile();
     }
 }

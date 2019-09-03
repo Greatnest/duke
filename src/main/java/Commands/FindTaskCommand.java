@@ -5,7 +5,7 @@ public class FindTaskCommand extends Command {
 
     public void execute(TaskList taskList, Ui ui, Storage storage) throws DukeException {
         if (input.length() < 6) {
-            throw new DukeException("☹ OOPS!!! The task to find cannot be empty.");
+            throw new DukeException("OOPS!!! The task to find cannot be empty.");
         }
 
         input = input.substring(5);
@@ -28,9 +28,11 @@ public class FindTaskCommand extends Command {
         }
         if (exists) {
             outputString = outputString.substring(0, outputString.length() - 1);
-            ui.showMessage(outputString);
+            ui.output = outputString;
+            //ui.showMessage(outputString);
         } else {
-            ui.showMessage("There are no matching tasks in your list.");
+            ui.output = "There are no matching tasks in your list.";
+            //ui.showMessage("There are no matching tasks in your list.");
         }
     }
 
