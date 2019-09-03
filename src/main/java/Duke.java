@@ -89,7 +89,7 @@ public class Duke {
         if (input.length() < 7) {
             throw new DukeException("☹ OOPS!!! The description of an event cannot be empty.");
         }
-        input = input.substring(7);
+        input = input.substring(6);
 
         int dateIndex = input.indexOf("/at ");
         if (dateIndex == -1) {
@@ -123,6 +123,8 @@ public class Duke {
         if (input.length() < 6) {
             throw new DukeException("☹ OOPS!!! The description of a todo cannot be empty.\"");
         }
+
+        input = input.substring(5);
 
         ToDo toAdd = new ToDo(input);
         taskList.add(toAdd);
