@@ -19,7 +19,7 @@ application {
 }
 
 sourceSets.main.java.srcDirs = ['src/main/java/Commands','src/main/java','src/main/java/Classes']
-sourceSets.main.resources.srcDirs =['src/main/resources', 'src/main/java']
+sourceSets.main.resources.srcDirs =['src/main/resources']
 
 javafx {
     version = "11.0.2"
