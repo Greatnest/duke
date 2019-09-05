@@ -1,12 +1,14 @@
 import java.util.Scanner;
 
 public class Ui {
+    private Scanner inputScanner;
 
     public Ui() {
 
     }
 
     public void showWelcome() {
+        inputScanner = new Scanner(System.in);
         String logo = " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -18,9 +20,10 @@ public class Ui {
 
     public String readCommand() {
         String input;
-        Scanner inputScanner = new Scanner(System.in);
-
-        return inputScanner.nextLine();
+        if (inputScanner.hasNextLine()) {
+            return inputScanner.nextLine();
+        }
+        return "";
     }
 
     public void showGoodByeMessage() {
