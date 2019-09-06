@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -56,8 +57,9 @@ public class Storage {
 
     private void createFileAndDirectory() {
             try {
-                Files.createDirectory(Paths.get("data"));
-                Files.createFile(Paths.get("data/duke.txt"));
+                File myNewFile = new File(this.filePath);
+                Files.createDirectory(Paths.get(myNewFile.getParent()));
+                Files.createFile(Paths.get(this.filePath));
             } catch(FileAlreadyExistsException e){
                 return;
             } catch (IOException e) {
