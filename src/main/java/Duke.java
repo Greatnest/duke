@@ -3,7 +3,6 @@ public class Duke {
     private TaskList tasks;
     private Ui ui;
 
-
     public Duke() {
         ui = new Ui();
         storage = new Storage("data/tasks.txt");
