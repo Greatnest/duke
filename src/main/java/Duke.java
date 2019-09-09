@@ -1,8 +1,15 @@
+/**
+ * Main class that runs Duke and contains the main method for Duke.
+ */
 public class Duke {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
 
+    /**
+     * Constructor that initializes the Task List, Storage and Ui
+     * Shows error if the file is empty or does not exit
+     */
     public Duke() {
         ui = new Ui();
         storage = new Storage("data/tasks.txt");
@@ -14,6 +21,9 @@ public class Duke {
         }
     }
 
+    /**
+     * Runs the command line interface, reads input from user and returns result accordingly
+     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
@@ -29,6 +39,12 @@ public class Duke {
         }
     }
 
+    /**
+     * Returns the response to the GUI when given an input by a user
+     *
+     * @param input: Input given by user in the GUI
+     * @return String: Response to display on GUI by the bot.
+     */
     protected String getResponse(String input) {
         String response;
         boolean isExit = false;
@@ -45,6 +61,10 @@ public class Duke {
         }
     }
 
+    /**
+     * Main method to run Duke
+     * @param args Argument values given when running the program
+     */
     public static void main(String[] args) {
         new Duke().run();
     }
