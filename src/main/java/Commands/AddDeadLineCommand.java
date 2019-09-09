@@ -2,8 +2,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Class that holds the command to add a deadline
+ * Subclass of Command
+ */
 public class AddDeadLineCommand extends Command {
-
+    /**
+     * Constructor that takes in a flag to represent if it should exit and the input given by the User
+     * @param isExit True if the program should exit after running this command, false otherwise
+     * @param input Input given by the user
+     */
     public AddDeadLineCommand(boolean isExit, String input) {
         super(isExit, input);
     }
@@ -31,6 +39,13 @@ public class AddDeadLineCommand extends Command {
         ui.output = "Got it. I've added this task: \n  " + toAdd.toString() + "\nNow you have " + taskList.getSize() + " task(s) in the list.";
         storage.saveToFile();
     }
+
+    /**
+     * Used to convert a string given to an appropriate LocalDateTime Object
+     * @param dateToParse String to be converted
+     * @return LocalDateTime object in d/M/yyyy HHmm format (2/2/2019 1830)
+     * @throws DukeException Thrown if the input given does not match the format
+     */
 
     private LocalDateTime parseDate(String dateToParse) throws DukeException {
         try {

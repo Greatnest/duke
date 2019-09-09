@@ -9,13 +9,25 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that deals with storage and I/O of the tasks.
+ */
 public class Storage {
     private String filePath;
 
+    /**
+     * Constructor that takes in the filePath for future I/O
+     * @param filePath String representing the path of the file to be written and read from.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Loads in data from an existing file into a created TaskList object
+     * @return TaskList object consisting of the data read from the file.
+     * @throws DukeException Thrown when the file does not exist
+     */
     public ArrayList<Task> load() throws DukeException {
         ArrayList<Task> taskList = new ArrayList<>();
         try {
@@ -55,6 +67,9 @@ public class Storage {
         return taskList;
     }
 
+    /**
+     * Creates the directory and file as given by the file path initialized in the constructor
+     */
     private void createFileAndDirectory() {
             try {
                 File myNewFile = new File(this.filePath);
@@ -76,11 +91,20 @@ public class Storage {
         }
     }
 
+    /**
+     * Converts the LocalDateTime object into printable string for writing to file
+     * @param dateTime LocalDateTime object to be converted
+     * @return String format of the LocalDateTime object
+     */
     private String unparseDate(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
         return dateTime.format(formatter);
     }
 
+    /**
+     * Creates the file as necessary, reads the TaskList and converts each value into a string and writes it to file.
+     * Error occurs if program is unable to write to the file.
+     */
     public void saveToFile() {
         String toSave = "";
         createFileAndDirectory();

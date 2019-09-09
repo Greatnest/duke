@@ -1,4 +1,13 @@
+/**
+ * Class that represents the command for a task to be found
+ * Subclass of Command
+ */
 public class FindTaskCommand extends Command {
+    /**
+     * Constructor that takes in a flag to represent if it should exit and the input given by the User
+     * @param isExit True if the program should exit after running this command, false otherwise
+     * @param input Input given by the user
+     */
     public FindTaskCommand(boolean isExit, String input) {
         super(isExit, input);
     }

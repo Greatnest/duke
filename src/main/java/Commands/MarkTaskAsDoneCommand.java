@@ -1,5 +1,12 @@
+/**
+ * Class that represents the command to mark the task as done
+ */
 public class MarkTaskAsDoneCommand extends Command{
-
+    /**
+     * Constructor that takes in a flag to represent if it should exit and the input given by the User
+     * @param isExit True if the program should exit after running this command, false otherwise
+     * @param input Input given by the user
+     */
     public MarkTaskAsDoneCommand(Boolean isExit, String input) {
         super(isExit, input);
     }

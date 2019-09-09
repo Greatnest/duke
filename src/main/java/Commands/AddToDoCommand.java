@@ -1,5 +1,13 @@
+/**
+ * Class that holds the command to add a to do
+ * Subclass of Command
+ */
 public class AddToDoCommand extends Command{
-
+    /**
+     * Constructor that takes in a flag to represent if it should exit and the input given by the User
+     * @param isExit True if the program should exit after running this command, false otherwise
+     * @param input Input given by the user
+     */
     public AddToDoCommand(Boolean isExit, String input) {
         super(isExit, input);
     }

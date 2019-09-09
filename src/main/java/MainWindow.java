@@ -6,6 +6,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Class that represents the main window holding the different elements of the GUI
+ */
 public class MainWindow extends AnchorPane {
     @FXML
     private ScrollPane scrollPane;
@@ -31,6 +34,9 @@ public class MainWindow extends AnchorPane {
     }
 
     @FXML
+    /**
+     * Handles input given by the user and creates a DialogBox for every value given by user or response given by Duke
+     */
     private void handleUserInput() throws InterruptedException {
         String input = userInput.getText();
         String response = duke.getResponse(input);

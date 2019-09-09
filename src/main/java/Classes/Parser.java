@@ -1,9 +1,13 @@
+/**
+ * Class that takes in a string and parses it to return a valid command to be ran
+ */
 public class Parser {
-
-    public Parser() {
-
-    }
-
+    /**
+     * Takes in input from user and returns a command based on the input given.
+     * @param input String given by the user
+     * @return The command object corresponding to the user input
+     * @throws DukeException Thrown when an invalid input is given
+     */
     public static Command parse(String input) throws DukeException {
         if (input.startsWith("todo ")) {
             return new AddToDoCommand(false, input);
