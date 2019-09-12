@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AddDeadlineCommandTest {
+public class AddEventCommandTest {
     @Test
-    public void TestDeadlineCommand() throws DukeException, IOException {
+    public void TestEventCommand() throws DukeException, IOException {
         File tempFile = File.createTempFile("duke",".txt");
         tempFile.deleteOnExit();
 
@@ -18,11 +18,13 @@ public class AddDeadlineCommandTest {
         Ui newUi = new Ui();
         Storage newStorage = new Storage(tempFile.getPath());
 
-        AddDeadLineCommand deadLineCommand = new AddDeadLineCommand(false,"deadline To complete work /by 1/1/2019 1830");
-        deadLineCommand.execute(newTaskList, newUi, newStorage);
+        AddEventCommand eventCommand = new AddEventCommand(false,"event Birthday Party /at 12/12/2019 1830");
+        eventCommand.execute(newTaskList, newUi, newStorage);
 
         assertEquals(1, newTaskList.getSize());
+        newTaskList.getTask(0).markAsDone();
+        newStorage.saveToFile();
         assertTrue(tempFile.exists());
-        assertEquals( "D | 0 | To complete work | 1/1/2019 1830", Files.readAllLines(Paths.get(tempFile.getPath())).get(0));
+        assertEquals( "E | 1 | Birthday Party | 12/12/2019 1830", Files.readAllLines(Paths.get(tempFile.getPath())).get(0));
     }
 }

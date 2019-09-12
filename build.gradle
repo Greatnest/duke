@@ -20,6 +20,7 @@ application {
 
 sourceSets.main.java.srcDirs = ['src/main/java/Commands','src/main/java','src/main/java/Classes']
 sourceSets.main.resources.srcDirs =['src/main/resources']
+sourceSets.test.java.srcDirs = ['src/test/java/Commands','src/test/java','src/test/java/Classes']
 
 javafx {
     version = "11.0.2"
@@ -32,4 +33,5 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    dependsOn 'cleanTest'
 }

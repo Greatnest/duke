@@ -21,8 +21,8 @@ public class AddToDoCommandTest {
         AddToDoCommand todoCommand = new AddToDoCommand(false, "todo hello world");
         todoCommand.execute(newTaskList, newUi, newStorage);
 
-        assertEquals(newTaskList.getSize(), 1);
+        assertEquals(1, newTaskList.getSize());
         assertTrue(tempFile.exists());
-        assertEquals(Files.readAllLines(Paths.get(tempFile.getPath())).get(0), "T | 0 | hello world");
+        assertEquals("T | 0 | hello world", Files.readAllLines(Paths.get(tempFile.getPath())).get(0));
     }
 }
